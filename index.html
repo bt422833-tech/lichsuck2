@@ -1,0 +1,566 @@
+<!DOCTYPE html>  <html lang="vi">    <head>    
+<meta name="viewport" content="width=device-width, initial-scale=1">  
+<meta charset="UTF-8">    
+<title>Trắc nghiệm Lịch Sử+ Đúng Sai( vanduca9 )</title>    
+<style>  
+.flex-row{  
+display:flex;  
+gap:10px;  
+align-items:flex-start;  
+flex-wrap:wrap;  
+}  
+#scorePopup{  
+position:fixed;  
+top:0;  
+left:0;  
+width:100%;  
+height:100%;  
+background:rgba(0,0,0,0.6);  
+display:none;  
+align-items:center;  
+justify-content:center;  
+z-index:999;  
+}  .popupBox{
+background:white;
+padding:30px;
+border-radius:14px;
+text-align:center;
+width:80%;
+max-width:320px;
+animation:pop 0.4s ease;
+}
+
+.popupBox h1{
+font-size:36px;
+color:#2e7d32;
+margin-bottom:10px;
+}
+
+.popupBox p{
+font-size:22px;
+margin-bottom:15px;
+}
+
+.popupBox button{
+padding:12px 20px;
+font-size:18px;
+background:#1e88e5;
+color:white;
+border:none;
+border-radius:8px;
+}
+
+@keyframes pop{
+0%{transform:scale(0.5);opacity:0}
+100%{transform:scale(1);opacity:1}
+}
+#result{
+animation:pop 0.5s ease;
+}
+
+@keyframes pop{
+0%{transform:scale(0.6);opacity:0}
+100%{transform:scale(1);opacity:1}
+}
+#result{
+margin-top:20px;
+padding:18px;
+font-size:28px;
+font-weight:bold;
+text-align:center;
+background:linear-gradient(135deg,#4caf50,#2e7d32);
+color:white;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.2);
+}
+table{
+margin:6px auto;
+font-size:12px;
+background:white;
+border-collapse:collapse;
+max-width:100%;
+}
+
+table th, table td{
+border:1px solid #666;
+padding:3px 5px;
+text-align:center;
+}
+
+table th{
+background:#a2f2f2;
+font-weight:bold;
+}
+white-space:nowrap;
+}
+
+/* toàn trang */
+body{
+font-family:Arial;
+padding:16px;
+line-height:1.6;
+background:#f3f3f3;
+}
+
+.group-grid{
+display:grid;
+grid-template-columns:1fr;
+gap:16px;
+margin-bottom:24px;
+}
+
+.passage{
+font-weight:bold;
+margin-bottom:10px;
+}
+
+.question-row{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:16px;
+}
+
+.question{
+background:white;
+padding:8px 10px;
+border-radius:10px;
+box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+.question b{
+display:block;
+white-space:pre-line;
+margin-bottom:3px;
+}
+
+.question label{
+display:block;
+margin:4px 0;
+padding:3px 4px;
+border-radius:6px;
+}
+button{
+width:100%;
+padding:14px;
+font-size:18px;
+margin-top:14px;
+border:none;
+border-radius:10px;
+background:#1e88e5;
+color:white;
+font-weight:bold;
+}
+button:empty{
+display:none;
+}
+
+#redoBtn{
+background:#43a047;
+}
+.correct{
+background:#d4edda;
+color:#155724;
+font-weight:bold;
+}
+
+.wrong{
+background:#f8d7da;
+color:#721c24;
+font-weight:bold;
+}
+#topBtn{
+position:fixed;
+bottom:25px;
+right:20px;
+width:55px;
+height:55px;
+border-radius:50%;
+background:#ff9800;
+color:white;
+font-size:26px;
+border:none;
+display:none;
+cursor:pointer;
+box-shadow:0 4px 12px rgba(0,0,0,0.3);
+transition:0.3s;
+}
+
+#topBtn:hover{
+transform:scale(1.1);
+background:#fb8c00;
+}
+#popupDetail{
+font-size:18px;
+margin-bottom:10px;
+}
+
+#popupBar{
+width:100%;
+height:10px;
+background:#ddd;
+border-radius:6px;
+margin-top:8px;
+}
+
+#popupBarFill{
+height:10px;
+width:0%;
+background:#4caf50;
+border-radius:6px;
+transition:0.3s;
+}
+</style>
+
+</head>    
+<body>  <h2>TRẮC NGHIỆM LỊCH SỬ (32câu)</h2>    
+<form id="quiz"></form>  <h2>PHẦN ĐÚNG / SAI</h2>  
+<div id="dsquiz"></div>  <h3 id="result" style="display:none"></h3>  
+<button id="checkBtn" type="button" onclick="submitAll()">  
+CHECK ĐÁP ÁN THÔI!!!  
+</button>  <button id="redoBtn" type="button" onclick="redoQuiz()" style="display:none">  
+LÀM LẠI  
+</button>  <div id="scorePopup">  
+<div class="popupBox">  <h1>🏆 <span id="popupScore">0 / 62</span></h1>  <p id="popupPercent">0% chính xác</p>  <p id="popupDetail"></p>  <div id="popupBar">  
+<div id="popupBarFill"></div>  
+</div>  <button onclick="redoQuiz()">LÀM LẠI</button>
+<button onclick="closePopup()">ĐÓNG</button>
+
+</div>  
+</div>  
+<button id="topBtn" onclick="goTop()">↑</button>  <script>  
+function closePopup(){  
+document.getElementById("scorePopup").style.display="none";  
+}  
+function goTop(){  
+window.scrollTo({  
+top:0,  
+behavior:"smooth"  
+});  
+}  
+  
+// hiện nút khi cuộn xuống  
+window.onscroll=function(){  
+  
+let btn=document.getElementById("topBtn");  
+  
+if(document.documentElement.scrollTop>200){  
+btn.style.display="block";  
+}else{  
+btn.style.display="none";  
+}  
+  
+}  
+let submitted=false;  
+  
+function shuffle(arr){  
+for(let i=arr.length-1;i>0;i--){  
+let j=Math.floor(Math.random()*(i+1));  
+[arr[i],arr[j]]=[arr[j],arr[i]];  
+}  
+}  
+
+  
+    
+let mcq = [
+
+{q:"Câu 1. Trong những năm 1905-1908, Phan Bội Châu không có hoạt động nào sau đây ?",a:["Đưa thanh niên Việt Nam sang Nhật Bản học tập ở một số trường tư thục.","Thành lập Đông Á Đồng minh Hội và Điền – Quế - Việt Liên minh.","Vận động sự ủng hộ của chính giới Nhật Bản cho công cuộc giải phóng dân tộc.","Thành lập tổ chức Việt Nam Quang phục hội ở Trung Quốc."],c:3},
+
+{q:"Câu 2. Nội dung nào sau đây phản ánh đúng về hoạt động đối ngoại của Phan Châu Trinh trong những năm 1911-1925?",a:["Tổ chức các buổi diễn thuyết để thức tỉnh dư luận Pháp về tình hình Việt Nam.","Tìm kiếm sự giúp đỡ quân sự từ các nước phương Tây để chống thực dân Pháp.","Gắn hoạt động đối ngoại với việc tập trung xây dựng lực lượng vũ trang trong nước.","Chủ trương dựa vào Nhật Bản để giành độc lập dân tộc bằng con đường bạo động."],c:0},
+
+{q:"Câu 3. Nội dung nào sau đây phản ánh đúng về mục tiêu hoạt động đối ngoại của Đảng Cộng sản Đông Dương trong giai đoạn 1941-1945?",a:["Bước đầu thiết lập quan hệ giữa cách mạng Việt Nam với Quốc tế Cộng sản để giải phóng dân tộc.","Chủ động tham gia các liên minh khu vực nhằm mở rộng ảnh hưởng của cách mạng Đông Dương.","Thiết lập quan hệ ngoại giao chính thức với các cường quốc để khẳng định vị thế quốc gia độc lập.","Tranh thủ sự ủng hộ của lực lượng tiến bộ quốc tế nhằm phục vụ cho mục tiêu giải phóng dân tộc."],c:3},
+
+{q:"Câu 4. Sự ra đời của Liên minh nhân dân Việt – Miên – Lào có ý nghĩa nào sau đây đối với cách mạng Đông Dương?",a:["Đánh dấu sự ra đời của chính Đảng vô sản ở mỗi nước Đông Dương.","Đánh dấu thắng lợi của cuộc kháng chiến chống Pháp ở Đông Dương.","Giải quyết triệt để vấn đề dân tộc trong khuôn khổ từng nước Đông Dương.","Làm thất bại âm mưu chia rẽ khối đoàn kết của ba nước."],c:3},
+
+{q:"Câu 5. Trước ngày 6-3-1946, nước Việt Nam Dân chủ Cộng hòa thực hiện chính sách đối ngoại nào sau đây?",a:["Hòa Pháp để đuổi Trung.","Hòa với Trung Hoa Dân quốc để đánh Pháp.","Hòa hoãn với cả Pháp và Tưởng.","Hòa hoãn với Anh để đánh đuổi Nhật."],c:1},
+
+{q:"Câu 6. Trong quá trình hoạt động cách mạng những năm 1920 – 1925, Nguyễn Ái Quốc đã tham gia thành lập tổ chức nào sau đây?",a:["Tâm tâm xã.","Mặt trận Việt Minh.","Hội Liên hiệp thuộc địa.","Duy Tân hội."],c:2},
+
+{q:"Câu 7. Nội dung nào sau đây phản ánh điểm tương đồng cơ bản của đấu tranh ngoại giao trong cuộc kháng chiến chống thực dân Pháp (1945 – 1954) và đế quốc Mỹ (1954 – 1975) ở Việt Nam?",a:["Đấu tranh ngoại giao luôn đi trước mở đường cho đấu tranh quân sự.","Mặt trận ngoại giao được hình thành ngay từ đầu cuộc kháng chiến.","Đấu tranh ngoại giao có mối quan hệ chặt chẽ với đấu tranh chính trị.","Hoạt động ngoại giao chịu sự chi phối hoàn toàn của hoạt động quân sự."],c:2},
+
+{q:"Câu 8. Năm 1995, Việt Nam bình thường hóa quan hệ ngoại giao với ?",a:["Nhật Bản.","Mỹ.","Liên Xô.","Ấn Độ."],c:1},
+
+{q:"Câu 9. Trong bối cảnh quốc tế đang diễn ra theo nhiều xu thế mới với những diễn biến phức tạp, chủ trương nhất quán của Đảng và Nhà nước Việt Nam là ?",a:["Hội nhập quốc tế để thu hút vốn từ bên ngoài bằng mọi giá.","Tham gia liên minh chính trị với Mỹ và các nước phương Tây.","Chủ động kết nối các cường quốc để nâng tầm đối tác chiến lược.","Đa phương hóa, đa dạng hóa các quan hệ quốc tế trên cơ sở bình đẳng."],c:3},
+
+{q:"Câu 10. Từ thực tiễn của hoạt động đối ngoại trong 30 năm chiến tranh giải phóng dân tộc, Việt Nam cần phát huy bài học nào sau đây trong chính sách đối ngoại hiện nay?",a:["Tuyệt đối không tiến hành các hoạt động ngoại giao với quốc gia cựu thù.","Nhân nhượng vô nguyên tắc để có thêm thời gian chuẩn bị lực lượng.","Chủ quyền, lợi ích quốc gia phải là thượng tôn, bất khả xâm phạm.","Xây dựng liên minh quân sự với các cường quốc để tranh thủ sự giúp đỡ."],c:2},
+
+{q:"Câu 11. Năm 1996, Việt Nam là một trong những thành viên sáng lập của ?",a:["Hội đồng tương trợ kinh tế.","Phong trào Không liên kết.","Tổ chức Thương mại thế giới.","Diễn đàn Á – Âu (ASEM)."],c:3},
+
+{q:"Câu 12. Từ năm 1991 trở đi, ngoại giao đa phương Việt Nam bước vào thời kì phát triển mới là do tác động của yếu tố nào sau đây?",a:["Quá trình công nghiệp hóa đã hoàn thành.","Sự thay đổi tích cực trong tư duy đối ngoại của Đảng Cộng sản Việt Nam.","Âm mưu chống phá đã được ngăn chặn.","Cơ sở vật chất trong nước được cải thiện."],c:1},
+
+{q:"Câu 13. Nội dung nào sau đây là đặc điểm hoạt động đối ngoại của Việt Nam từ năm 1975 đến nay?",a:["Thực hiện nhiệm vụ bảo vệ độc lập dân tộc và thống nhất đất nước.","Gắn hội nhập quốc tế với củng cố độc lập, hòa bình, ổn định và tiến bộ xã hội.","Đối ngoại Đảng, Nhà nước và nhân dân bắt đầu xuất hiện.","Vận dụng linh hoạt sách lược “vừa đánh, vừa đàm”."],c:1},
+
+{q:"Câu 14. Nội dung nào sau đây là một trong những yếu tố tác động đến quyết định ra đi tìm đường cứu nước của Nguyễn Tất Thành?",a:["Phong trào đấu tranh theo khuynh hướng vô sản diễn ra rộng khắp.","Cách mạng Việt Nam hoàn toàn đi theo khuynh hướng dân chủ tư sản.","Thực dân Pháp hoàn thành khai thác thuộc địa lần thứ hai.","Nguyện vọng cứu nước, giải phóng dân tộc trở nên cấp thiết."],c:3},
+
+{q:"Câu 15. Năm 1941, Nguyễn Ái Quốc trở về nước và thành lập tổ chức nào sau đây?",a:["Mặt trận Việt Minh.","Hội Việt Nam Cách mạng thanh niên.","Đảng Cộng sản Việt Nam.","Thanh niên Cộng sản đoàn."],c:0},
+
+{q:"Câu 16. Nguyên nhân chủ yếu nào sau đây dẫn đến sự thất bại của phong trào yêu nước chống Pháp ở Việt Nam cuối thế kỉ XIX đầu thế kỉ XX?",a:["Chưa có các khuynh hướng cứu nước khác nhau.","Nhân dân chưa có quyết tâm cao.","Các phong trào chưa phát triển mạnh.","Sự không phù hợp của khuynh hướng cứu nước."],c:3},
+
+{q:"Câu 17. Từ hành trình ra đi tìm đường cứu nước của Nguyễn Tất Thành, thế hệ trẻ ngày nay cần rút ra bài học nào?",a:["Đặt lợi ích cá nhân lên trên hết.","Cống hiến sức trẻ cho đất nước.","Chỉ làm việc ở nước ngoài.","Chọn nghề dễ kiếm tiền."],c:1},
+
+{q:"Câu 18. Trong thời gian ở Liên Xô (1923-1924), Nguyễn Ái Quốc hoạt động đối ngoại nào sau đây?",a:["Tham dự Đại hội V Quốc tế Cộng sản.","Tham gia thành lập Đảng Cộng sản Pháp.","Gửi bản yêu sách.","Thành lập Hội liên hiệp thuộc địa."],c:0},
+
+{q:"Câu 19. Đoạn tư liệu phản ánh vai trò của Hồ Chí Minh trong quá trình ?",a:["Ra nước ngoài tìm đường cứu nước.","Chuẩn bị thành lập Đảng.","Lãnh đạo kháng chiến.","Chuẩn bị thành lập Đảng Cộng sản Việt Nam."],c:1},
+
+{q:"Câu 20. Nguyễn Ái Quốc đề xuất thành lập Mặt trận Việt Minh tại đâu?",a:["Bắc Sơn.","Tân Trào.","Võ Nhai.","Pác Bó."],c:3},
+
+{q:"Câu 21. Bài học không đúng từ thắng lợi của Việt Minh là?",a:["Xây dựng khối đoàn kết toàn dân.","Chính sách linh hoạt.","Đoàn kết quốc tế.","Bỏ qua vai trò nhân dân."],c:3},
+
+{q:"Câu 22. Nội dung nào không đúng về yếu tố gia đình ảnh hưởng đến Hồ Chí Minh?",a:["Gia đình bóc lột.","Truyền thống yêu nước.","Xuất thân nhà nho.","Gia đình nhà giáo."],c:0},
+{q:"Câu 23. Phương hướng cơ bản của cách mạng miền Nam được xác định trong Hội nghị lần thứ 15 Ban Chấp hành Trung ương Đảng Lao động Việt Nam (1-1959) do Hồ Chí Minh chủ trì là ?",a:["Xây dựng chủ nghĩa xã hội và đấu tranh thống nhất nước nhà.","Khởi nghĩa giành chính quyền về tay nhân dân.","Đưa ra những dự báo và thể hiện quyết tâm thắng Mỹ.","Toàn dân, toàn diện, trường kì, tự lực cánh sinh."],c:1},
+
+{q:"Câu 24. Trong quá trình chuẩn bị về tư tưởng, chính trị để thành lập Đảng Cộng sản Việt Nam (1919 – 1929), Nguyễn Ái Quốc có vai trò nổi bật nào sau đây?",a:["Xây dựng lí luận cách mạng giải phóng dân tộc kết hợp với giải phóng giai cấp.","Thành lập tổ chức theo hướng tư sản.","Ra báo Thanh niên để phục vụ Hội Liên hiệp thuộc địa.","Soạn thảo Cương lĩnh chính trị và thông qua tại Hội nghị thành lập Đảng."],c:0},
+
+{q:"Câu 25. Trong quá trình chuẩn bị về tổ chức để thành lập Đảng Cộng sản Việt Nam (1919 – 1929), Nguyễn Ái Quốc có sự sáng tạo nào sau đây?",a:["Chủ nhiệm báo Người cùng khổ.","Xuất bản Đường Kách mệnh.","Thành lập các tổ chức cộng sản trước khi thành lập Đảng.","Viết Bản án chế độ thực dân Pháp."],c:2},
+
+{q:"Câu 26. Nội dung nào sau đây thể hiện vai trò quyết định của Hồ Chí Minh đối với thắng lợi của Cách mạng tháng Tám năm 1945 ở Việt Nam?",a:["Đề xuất và chỉ đạo thực hiện Tổng khởi nghĩa.","Xây dựng bộ máy chính quyền.","Tranh thủ sự ủng hộ quốc tế.","Soạn thảo kế hoạch khởi nghĩa."],c:0},
+
+{q:"Câu 27. Nhận xét nào sau đây phản ánh đúng điểm mới về hoạt động của Nguyễn Ái Quốc trong giai đoạn 1925-1929 so với giai đoạn 1920-1924?",a:["Tăng cường gắn cách mạng Việt Nam với thế giới.","Hoạch định con đường cách mạng.","Chuẩn bị trực tiếp điều kiện cho sự ra đời Đảng Cộng sản Việt Nam.","Thành lập tổ chức cộng sản."],c:2},
+
+{q:"Câu 28. Trong việc giải quyết mối quan hệ Việt – Pháp (từ tháng 3 đến trước ngày 19-12-1946), Chủ tịch Hồ Chí Minh đã vận dụng nguyên tắc nào?",a:["Thực hiện chính sách mềm dẻo về đối ngoại.","Nhân nhượng với các nước xã hội chủ nghĩa.","Đối đầu trực tiếp với Pháp.","Từ chối thiết lập quan hệ với phương Tây."],c:0},
+
+{q:"Câu 29. Từ năm 1890 đến năm 1911, Nguyễn Tất Thành có hoạt động tiêu biểu nào sau đây?",a:["Dạy học ở trường Dục Thanh (Phan Thiết).","Hoạt động ở Pháp và Liên Xô.","Trình bày tham luận tại Hội nghị Véc-xai.","Mở lớp đào tạo cán bộ ở Trung Quốc."],c:0},
+
+{q:"Câu 30. Việc Chủ tịch Hồ Chí Minh đẩy mạnh hoạt động ngoại giao với nhân dân Pháp tiến bộ, Trung Quốc, Liên Xô và các nước Đông Âu (1949 – 1950) đem lại tác dụng nào sau đây?",a:["Tranh thủ được sự ủng hộ của các nước đối với cuộc kháng chiến.","Đặt cơ sở gia nhập các tổ chức quốc tế.","Buộc Pháp rút quân.","Tạo điều kiện cho miền Bắc tiến lên CNXH."],c:0},
+
+{q:"Câu 31. 'Muốn cứu nước và giải phóng dân tộc, không còn con đường nào khác ngoài con đường cách mạng vô sản' là nhận định của Nguyễn Ái Quốc khi đọc ?",a:["Sơ thảo lần thứ nhất Luận cương về vấn đề dân tộc và vấn đề thuộc địa của Lênin.","Báo Đời sống công nhân.","Báo Thanh niên.","Tác phẩm Đường Kách mệnh."],c:0},
+
+{q:"Câu 32. Hội nghị Ban Chấp hành Trung ương Đảng Cộng sản Đông Dương (5-1941) do Nguyễn Ái Quốc chủ trì xác định nhiệm vụ trực tiếp, trước mắt là ?",a:["Giải phóng giai cấp.","Cải cách ruộng đất.","Xóa bỏ tàn dư phong kiến.","Giải phóng dân tộc."],c:3}
+
+];
+  
+let quiz = document.getElementById("quiz");  
+let qIndex = mcq.length;  
+shuffle ( mcq);  
+mcq.forEach((x,i)=>{  
+  
+let answers = x.a.map((text,index)=>({text,index}));  
+  
+shuffle(answers);  
+  
+x.shuffledAnswers = answers;  
+  
+quiz.innerHTML += `  
+<div class="question" id="q${i}" data-correct="${answers.findIndex(a=>a.index===x.c)}">  
+<div class="flex-row">  
+  
+<div>  
+<b>${x.q}</b>  
+  
+<div class="result"></div>  
+  
+${answers.map((o,idx)=>`  
+<label>  
+<input type="radio" name="q${i}" value="${idx}">  
+${o.text}  
+</label>  
+`).join("")}  
+  
+</div>  
+  
+${x.image ? `<img src="${x.image}" style="max-width:260px">` : ""}  
+  
+</div>  
+  
+</div>  
+`;  
+});  
+    
+// ---------------- 6 câu đúng sai ----------------    
+let dsq=[
+
+{
+q:"Câu 1. Tư liệu về hoạt động đối ngoại giai đoạn 1944-1945",
+a:[
+"Khai thác hoàn cảnh chiến tranh thế giới, lợi dụng mâu thuẫn trong hàng ngũ đối phương và phe Đồng minh là điều kiện quan trọng giúp Đảng Cộng sản Đông Dương tranh thủ tối đa sức mạnh ngoại lực cho sự nghiệp cứu nước",
+"Sự hợp tác giữa Mặt trận Việt Minh và quân Đồng minh Mỹ trong Chiến tranh thế giới thứ hai đã đặt nền móng cho quan hệ đối tác chiến lược giữa Hoa Kỳ và Việt Nam....",
+" Theo đoạn tư liệu trên, Tư lệnh không quân Mỹ ở Trung Quốc đã chủ động liên hệ với Mặt trận Việt Minh vào năm 1944 để hỗ trợ công cuộc giải phóng dân tộc Việt Nam.",
+"Hoạt động đối ngoại của Đảng Cộng sản Đông Dương trong những năm 1939-1945 đã gắn kết sự nghiệp giải phóng dân tộc Việt Nam với phong trào chống phát xít...."
+],
+c:[1,0,0,0]
+},
+
+{
+q:"Câu 2. Tư liệu về Nguyễn Ái Quốc năm 1919",
+a:[
+"Bản Yêu sách của nhân dân An Nam yêu cầu Chính phủ Pháp thừa nhận độc lập, tự do, dân chủ và quyền bình đẳng của dân tộc Việt Nam.",
+"Bản Yêu sách của nhân dân An Nam đánh dấu bước phát triển đi lên trong cuộc đấu tranh bảo vệ độc lập dân tộc của Hội những người Việt Nam yêu nước tại Pháp.",
+"Tình hình chính trị thế giới đang trải qua những chuyển biến lớn lao” trong tư liệu phản ánh Trật tự thể giới hai cực I-an-ta đang hình thành, cục diện Chiến tranh lạnh tác động đến nhiều nước. ",
+"Bản Yêu sách được đăng tải trên báo Nhân đạo và phổ biến rộng rãi tại Pháp cho thấy Nguyễn Ái Quốc đã chủ động gắn vấn đề dân tộc Việt Nam với phong trào dân chủ và phong trào công nhân quốc tế. "
+],
+c:[0,0,0,1]
+},
+
+{
+q:"Câu 3. Tư liệu về thư Hồ Chí Minh gửi Mỹ",
+a:[
+"Việt Nam yêu chuộng hòa bình nhưng không bao giờ nhân nhượng.",
+"Mỹ phải rút quân là cách giải quyết đúng đắn.",
+"Mục tiêu là buộc các nước tôn trọng quyền dân tộc cơ bản.",
+"Luôn kết hợp độc lập tự chủ với chính nghĩa."
+],
+c:[0,1,1,1]
+},
+
+{
+q:"Câu 4. Tư liệu về con đường đến với chủ nghĩa Mác - Lênin",
+a:[
+" Lúc đầu, chính là chủ nghĩa yêu nước, chứ chưa phải là chủ nghĩa cộng sản đã đưa Nguyễn Ái Quốc đến với Lê-nin, tin theo Quốc tế thứ ba.",
+"Việc Nguyễn Ái Quốc “hoàn toàn tin theo Lê-nin, tin theo Quốc tế thứ ba” đã mở ra cơ hội mới trong cuộc hành trình tìm đường cứu nước",
+" Trước khi đọc Sơ thảo lần thứ nhất những luận cương về vấn đề dân tộc và vấn đề thuộc địa, Nguyễn Ái Quốc đã đọc nhiều cuốn sách của Lê-nin.",
+" Cụm từ “đây là con đường giải phóng chúng ta!” trong đoạn tư liệu trên chính là con đường cứu nước theo khuynh hướng cách mạng vô sản."
+],
+c:[1,0,0,1]
+},
+
+{
+q:"Câu 5. Tư liệu về liên minh Việt - Miên - Lào",
+a:[
+"Liên minh Việt – Miên – Lào được thành lập vào năm đầu tiên của cuộc kháng chiến chống thực dân Pháp.",
+"Một trong những cơ sở để thiết lập liên minh chiến đấu giữa ba dân tộc trên bán đảo Đông Dương là các nước có chung kẻ thù.",
+"Hội nghị liên minh nhân dân ba nước Đông Dương góp phần làm thất bại âm mưu thủ đoạn “chia để trị” của thực dân Pháp và can thiệp Mỹ.",
+" Sự ra đời của Liên minh Việt – Miên – Lào chứng tỏ lần đầu tiên trong lịch sử nhân dân ba nước Đông Dương đã đoàn kết trong chiến đấu."
+],
+c:[0,1,1,0]
+}
+
+];
+  
+let dsquiz = document.getElementById("dsquiz");  
+  
+dsq.forEach((block,gi)=>{  
+  
+dsquiz.innerHTML += `<div class="question"><b>${block.q}</b>`;  
+  
+block.a.forEach((text,i)=>{  
+  
+let id = qIndex;  
+let name = "q"+id;  
+let correct = block.c[i];  
+  
+dsquiz.innerHTML += `  
+<div id="q${id}" data-correct="${correct}"   
+style="margin:10px 0;padding:8px;background:#f7f7f7;border-radius:6px">  
+  
+<label style="margin-right:10px">  
+<input type="radio" name="${name}" value="1"> Đúng  
+</label>  
+  
+<label style="margin-right:10px">  
+<input type="radio" name="${name}" value="0"> Sai  
+</label>  
+  
+<span>${text}</span>  
+<div class="result"></div>  
+</div>  
+`;  
+  
+qIndex++;  
+  
+});  
+  
+dsquiz.innerHTML += `</div>`;  
+  
+});  
+  
+function submitAll(){  
+  
+let correct=0;  
+let wrong=0;  
+let blank=0;  
+let total=qIndex;  
+  
+let resultBoxes=document.querySelectorAll(".result");  
+  
+for(let i=0;i<qIndex;i++){
+
+let radios=document.getElementsByName("q"+i);
+let chosen=null;
+
+let box=document.getElementById("q"+i);
+let correctValue=box.dataset.correct;
+
+let correctText="";
+let chosenText="";
+
+for(let j=0;j<radios.length;j++){
+
+let r=radios[j];
+let label=r.parentElement;
+
+if(r.value==correctValue){
+correctText=label.innerText;
+label.classList.add("correct");
+}
+
+if(r.checked){
+chosen=r;
+chosenText=label.innerText;
+}
+
+}
+
+if(!chosen){
+
+blank++;
+
+resultBoxes[i].innerHTML=
+"Bạn chọn: <span style='color:red;font-weight:bold'>Chưa chọn ❌</span> - Đáp án: <span style='color:green;font-weight:bold'>"+correctText+"</span>";
+
+}
+
+else if(chosen.value==correctValue){
+
+correct++;
+
+resultBoxes[i].innerHTML=
+"Bạn chọn: <span style='color:green;font-weight:bold'>"+chosenText+" ✔</span>";
+
+}
+
+else{
+
+wrong++;
+
+chosen.parentElement.classList.add("wrong");
+
+resultBoxes[i].innerHTML=
+"Bạn chọn: <span style='color:red;font-weight:bold'>"+chosenText+" ❌</span> - Đáp án: <span style='color:green;font-weight:bold'>"+correctText+"</span>";
+
+}
+
+}
+  
+let percent=Math.round((correct/total)*100);  
+  
+document.getElementById("popupScore").innerHTML =  
+correct+" / "+total;  
+  
+document.getElementById("popupDetail").innerHTML =  
+"✅ Đúng: "+correct+  
+" | ❌ Sai: "+wrong+  
+" | ⚪ Chưa làm: "+blank;  
+  
+document.getElementById("popupPercent").innerHTML =  
+percent+"% chính xác";  
+  
+document.getElementById("scorePopup").style.display="flex";  
+  
+document.getElementById("result").innerHTML =  
+"🏆 Điểm: "+correct+" / "+total;  
+  
+document.getElementById("result").style.display="block";  
+  
+document.getElementById("redoBtn").style.display="block";  
+document.getElementById("checkBtn").style.display="none";  
+  
+document.getElementById("popupBarFill").style.width =  
+percent+"%";  
+  
+}  
+  
+  
+function redoQuiz(){  
+location.reload();  
+}  
+</script>    </body>    
+</html>   
